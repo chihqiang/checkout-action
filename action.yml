@@ -1,0 +1,34 @@
+name: Checkout and Clone
+description: GitHub Action to clone any Git repository via HTTPS or SSH
+author: chihqiang
+inputs:
+  repo:
+    description: Git repository URL (HTTPS or SSH)
+    required: true
+  branch:
+    description: Branch to clone
+    required: false
+    default: main
+  token:
+    description: Token for HTTPS authentication (optional)
+    required: false
+  ssh_key:
+    description: SSH private key for SSH clone (optional)
+    required: false
+  dest:
+    description: Destination directory
+    required: false
+    default: repo
+    
+runs:
+  using: composite
+  steps:
+    - name: Run clone script
+      run: bash ${GITHUB_ACTION_PATH}/entry.sh
+      shell: bash
+      env:
+        REPO: ${{ inputs.repo }}
+        BRANCH: ${{ inputs.branch }}
+        TOKEN: ${{ inputs.token }}
+        SSH_KEY: ${{ inputs.ssh_key }}
+        DEST: ${{ inputs.dest }}
