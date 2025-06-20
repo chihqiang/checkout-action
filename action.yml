@@ -1,0 +1,53 @@
+name: Any Clone Repo
+description: GitHub Action to clone any Git repository via HTTPS or SSH
+author: 'zhiqiang <zhiqiang2033@gmail.com>' 
+inputs:
+  repo:
+    description: Git repository URL (HTTPS or SSH)
+    required: true
+
+  branch:
+    description: Branch to clone
+    required: false
+    default: main
+
+  token:
+    description: Token for HTTPS authentication (optional)
+    required: false
+
+  username:
+    description: Username for HTTPS basic authentication (optional)
+    required: false
+
+  password:
+    description: Password for HTTPS basic authentication (optional)
+    required: false
+
+  ssh_key:
+    description: SSH private key for SSH clone (optional)
+    required: false
+
+  dest:
+    description: Destination directory
+    required: false
+    default: repo
+
+
+runs:
+  using: composite
+  steps:
+    - name: Run clone script
+      run: bash ${GITHUB_ACTION_PATH}/entry.sh
+      shell: bash
+      env:
+        REPO: ${{ inputs.repo }}
+        BRANCH: ${{ inputs.branch }}
+        TOKEN: ${{ inputs.token }}
+        USERNAME: ${{ inputs.username }}
+        PASSWORD: ${{ inputs.password }}
+        SSH_KEY: ${{ inputs.ssh_key }}
+        DEST: ${{ inputs.dest }}
+
+branding:
+  icon: 'arrow-down-right'
+  color: 'blue'
