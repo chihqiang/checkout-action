@@ -12,8 +12,6 @@ inputs:
     default: ${{ github.token }}
   ssh-key:
     description: 'SSH key used to fetch the repository'
-  ssh-known-hosts:
-    description: 'Known hosts in addition to the user and global host key database'
   ssh-strict:
     description: 'Whether to perform strict host key checking'
     default: 'true'

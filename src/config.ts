@@ -18,7 +18,6 @@ export class Config {
   readonly ref: string;
   readonly token: string;
   readonly sshKey: string;
-  readonly sshKnownHosts: string;
   readonly sshStrict: boolean;
   readonly sshUser: string;
   readonly persistCredentials: boolean;
@@ -35,7 +34,6 @@ export class Config {
     this.ref = core.getInput('ref') || process.env.GITHUB_REF_NAME || process.env.GITHUB_REF || '';
     this.token = core.getInput('token') || process.env.GITHUB_TOKEN || '';
     this.sshKey = core.getInput('ssh-key') || '';
-    this.sshKnownHosts = core.getInput('ssh-known-hosts') || '';
     this.sshStrict = parseBool(core.getInput('ssh-strict'));
     this.sshUser = core.getInput('ssh-user') || 'git';
     this.persistCredentials = parseBool(core.getInput('persist-credentials'));
@@ -67,10 +65,6 @@ export class Config {
     fs.writeFileSync(keyPath, this.sshKey, { mode: 0o600 });
 
     const knownHostsPath = path.join(sshDir, 'known_hosts');
-
-    if (this.sshKnownHosts) {
-      fs.appendFileSync(knownHostsPath, this.sshKnownHosts + '\n');
-    }
 
     const host = this.sshHost();
     try {

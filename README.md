@@ -11,7 +11,7 @@
 - **浅克隆**（`fetch-depth`）或全量历史
 - 自动从 `GITHUB_SERVER_URL` 识别服务器地址，支持 GitHub
   Enterprise、GitLab 自托管等
-- **SSH 严格模式**，自动 keyscan 目标主机，支持 known hosts
+- **SSH 严格模式**，自动 keyscan 目标主机并写入 known_hosts
 
 ## 输入参数
 
@@ -21,7 +21,6 @@
 | `ref` | 分支、标签或 SHA | （默认分支） |
 | `token` | 个人访问令牌 | `${{ github.token }}` |
 | `ssh-key` | SSH 私钥 | - |
-| `ssh-known-hosts` | 已知主机公钥（写入 `~/.ssh/known_hosts`） | - |
 | `ssh-strict` | 是否开启 SSH 严格主机检查 | `true` |
 | `ssh-user` | SSH 用户；指定完整 HTTPS URL 时作为 HTTP Basic Auth 用户名 | `git` |
 | `persist-credentials` | 是否将凭证持久化到 git config | `true` |
@@ -117,7 +116,7 @@
 | --- | --- | --- |
 | Token | `token` | `owner/repo` 简写（GitHub 自动识别） |
 | 用户名 + Token | `ssh-user` + `token` | 完整 HTTPS URL（如 Gitee、GitLab） |
-| SSH Key | `ssh-key`、`ssh-known-hosts` | `git@...` 或 `ssh://...` URL |
+| SSH Key | `ssh-key` | `git@...` 或 `ssh://...` URL |
 
 启用 `persist-credentials`（默认开启）时，Token 会被写入 git 的
 `http.extraheader` 配置，使得后续 git 命令可以复用该凭证。

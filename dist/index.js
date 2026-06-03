@@ -19839,7 +19839,6 @@ var Config = class {
     this.ref = core.getInput("ref") || process.env.GITHUB_REF_NAME || process.env.GITHUB_REF || "";
     this.token = core.getInput("token") || process.env.GITHUB_TOKEN || "";
     this.sshKey = core.getInput("ssh-key") || "";
-    this.sshKnownHosts = core.getInput("ssh-known-hosts") || "";
     this.sshStrict = parseBool(core.getInput("ssh-strict"));
     this.sshUser = core.getInput("ssh-user") || "git";
     this.persistCredentials = parseBool(core.getInput("persist-credentials"));
@@ -19866,9 +19865,6 @@ var Config = class {
     const keyPath = path.join(sshDir, "action_rsa");
     fs.writeFileSync(keyPath, this.sshKey, { mode: 384 });
     const knownHostsPath = path.join(sshDir, "known_hosts");
-    if (this.sshKnownHosts) {
-      fs.appendFileSync(knownHostsPath, this.sshKnownHosts + "\n");
-    }
     const host = this.sshHost();
     try {
       const hosts = (0, import_child_process.spawnSync)("ssh-keyscan", [host], { stdio: ["ignore", "pipe", "pipe"], timeout: 1e4 });

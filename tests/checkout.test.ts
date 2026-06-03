@@ -33,7 +33,6 @@ function createConfig(overrides: Record<string, string> = {}): Config {
       repository: 'owner/repo',
       'ssh-key': '',
       'ssh-strict': 'true',
-      'ssh-known-hosts': '',
       'ssh-user': 'git',
       'persist-credentials': 'true',
       clean: 'true',

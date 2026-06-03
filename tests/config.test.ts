@@ -32,7 +32,6 @@ describe('Config', () => {
         ref: '',
         token: 'ghp_token',
         'ssh-key': '',
-        'ssh-known-hosts': '',
         'ssh-strict': 'true',
         'ssh-user': 'git',
         'persist-credentials': 'true',
