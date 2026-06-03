@@ -33,9 +33,11 @@ export class GitClient {
     this.run(args, { cwd: options?.cwd });
   }
 
-  configUnset(name: string, options?: { cwd?: string }): void {
+  configUnset(name: string, options?: { cwd?: string; global?: boolean }): void {
     try {
-      this.run(['config', '--local', '--unset-all', name], { cwd: options?.cwd });
+      const args = ['config', '--unset-all', name];
+      if (options?.global) args.splice(1, 0, '--global');
+      this.run(args, { cwd: options?.cwd });
     } catch {
       warning(`Failed to unset git config: ${name}`);
     }

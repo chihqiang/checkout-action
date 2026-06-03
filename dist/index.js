@@ -19959,7 +19959,9 @@ var GitClient = class _GitClient {
   }
   configUnset(name, options) {
     try {
-      this.run(["config", "--local", "--unset-all", name], { cwd: options?.cwd });
+      const args = ["config", "--unset-all", name];
+      if (options?.global) args.splice(1, 0, "--global");
+      this.run(args, { cwd: options?.cwd });
     } catch {
       warning3(`Failed to unset git config: ${name}`);
     }
@@ -20053,12 +20055,12 @@ var CheckoutService = class {
   persistToken(repoUrl, token, username) {
     const b64 = Buffer.from(`${username}:${token}`).toString("base64");
     const configKey = `http.${this.authHost(repoUrl)}.extraheader`;
-    this.git.run(["config", "--local", configKey, `AUTHORIZATION: basic ${b64}`]);
+    this.git.run(["config", "--global", configKey, `AUTHORIZATION: basic ${b64}`]);
     info3("Token persisted in git config");
   }
   removePersistedToken(repoUrl) {
     const configKey = `http.${this.authHost(repoUrl)}.extraheader`;
-    this.git.configUnset(configKey);
+    this.git.configUnset(configKey, { global: true });
   }
   authHost(repoUrl) {
     try {

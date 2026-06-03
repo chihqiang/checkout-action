@@ -54,13 +54,13 @@ export class CheckoutService {
   private persistToken(repoUrl: string, token: string, username: string): void {
     const b64 = Buffer.from(`${username}:${token}`).toString('base64');
     const configKey = `http.${this.authHost(repoUrl)}.extraheader`;
-    this.git.run(['config', '--local', configKey, `AUTHORIZATION: basic ${b64}`]);
+    this.git.run(['config', '--global', configKey, `AUTHORIZATION: basic ${b64}`]);
     info('Token persisted in git config');
   }
 
   private removePersistedToken(repoUrl: string): void {
     const configKey = `http.${this.authHost(repoUrl)}.extraheader`;
-    this.git.configUnset(configKey);
+    this.git.configUnset(configKey, { global: true });
   }
 
   private authHost(repoUrl: string): string {
