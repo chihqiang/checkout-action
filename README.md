@@ -103,6 +103,45 @@
     path: subdir
 ```
 
+### 检出后提交代码
+
+Token 方式（凭证自动持久化到 git config，后续 step 可直接 push）：
+
+```yaml
+- uses: chihqiang/checkout-action@main
+  with:
+    repository: owner/repo
+    token: ${{ secrets.GH_TOKEN }}
+
+- name: Push changes
+  run: |
+    echo "update" >> file.txt
+    git config user.name "github-actions[bot]"
+    git config user.email "github-actions[bot]@users.noreply.github.com"
+    git add .
+    git commit -m "chore: auto update"
+    git push
+```
+
+SSH 方式（`GIT_SSH_COMMAND` 通过 `core.exportVariable` 写入 `GITHUB_ENV`，
+密钥文件保留，后续 step 自动复用）：
+
+```yaml
+- uses: chihqiang/checkout-action@main
+  with:
+    repository: owner/repo
+    ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+- name: Push changes
+  run: |
+    echo "update" >> file.txt
+    git config user.name "github-actions[bot]"
+    git config user.email "github-actions[bot]@users.noreply.github.com"
+    git add .
+    git commit -m "chore: auto update"
+    git push
+```
+
 ## 输出
 
 | 输出名 | 说明 |

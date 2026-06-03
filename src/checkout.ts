@@ -45,7 +45,7 @@ export class CheckoutService {
       if (config.token && !config.persistCredentials && config.isHttpUrl(repoUrl)) {
         this.removePersistedToken(repoUrl);
       }
-      if (sshKeyPath) {
+      if (sshKeyPath && !config.persistCredentials) {
         config.cleanupSshKey(sshKeyPath);
       }
     }

@@ -19659,7 +19659,7 @@ var require_core = __commonJS({
       ExitCode2[ExitCode2["Success"] = 0] = "Success";
       ExitCode2[ExitCode2["Failure"] = 1] = "Failure";
     })(ExitCode || (exports2.ExitCode = ExitCode = {}));
-    function exportVariable(name, val) {
+    function exportVariable2(name, val) {
       const convertedVal = (0, utils_1.toCommandValue)(val);
       process.env[name] = convertedVal;
       const filePath = process.env["GITHUB_ENV"] || "";
@@ -19668,7 +19668,7 @@ var require_core = __commonJS({
       }
       (0, command_1.issueCommand)("set-env", { name }, convertedVal);
     }
-    exports2.exportVariable = exportVariable;
+    exports2.exportVariable = exportVariable2;
     function setSecret(secret) {
       (0, command_1.issueCommand)("add-mask", {}, secret);
     }
@@ -19880,7 +19880,7 @@ var Config = class {
     } else {
       sshCommand += " -o StrictHostKeyChecking=no";
     }
-    process.env.GIT_SSH_COMMAND = sshCommand;
+    core.exportVariable("GIT_SSH_COMMAND", sshCommand);
     core.info(`SSH key configured at ${keyPath}`);
     return keyPath;
   }
@@ -20045,7 +20045,7 @@ var CheckoutService = class {
       if (config.token && !config.persistCredentials && config.isHttpUrl(repoUrl)) {
         this.removePersistedToken(repoUrl);
       }
-      if (sshKeyPath) {
+      if (sshKeyPath && !config.persistCredentials) {
         config.cleanupSshKey(sshKeyPath);
       }
     }

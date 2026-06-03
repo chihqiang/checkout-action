@@ -6,6 +6,7 @@ import { Config } from '../src/config';
 
 vi.mock('@actions/core', () => ({
   getInput: vi.fn(),
+  exportVariable: vi.fn(),
   setFailed: vi.fn(),
   info: vi.fn(),
   warning: vi.fn(),
@@ -89,7 +90,7 @@ describe('Config', () => {
       } catch {
         // ignore
       }
-      delete process.env.GIT_SSH_COMMAND;
+      vi.clearAllMocks();
     });
 
     it('should return null without sshKey', () => {
@@ -105,8 +106,8 @@ describe('Config', () => {
       const result = config.setupSshKey();
       expect(result).not.toBeNull();
       expect(fs.existsSync(result!)).toBe(true);
-      expect(process.env.GIT_SSH_COMMAND).toContain('ssh -i');
-      expect(process.env.GIT_SSH_COMMAND).toContain('StrictHostKeyChecking=yes');
+      expect(core.exportVariable).toHaveBeenCalledWith('GIT_SSH_COMMAND', expect.stringContaining('ssh -i'));
+      expect(core.exportVariable).toHaveBeenCalledWith('GIT_SSH_COMMAND', expect.stringContaining('StrictHostKeyChecking=yes'));
     });
 
     it('should disable strict checking when sshStrict is false', () => {
@@ -115,7 +116,7 @@ describe('Config', () => {
         'ssh-strict': 'false',
       });
       config.setupSshKey();
-      expect(process.env.GIT_SSH_COMMAND).toContain('StrictHostKeyChecking=no');
+      expect(core.exportVariable).toHaveBeenCalledWith('GIT_SSH_COMMAND', expect.stringContaining('StrictHostKeyChecking=no'));
     });
   });
 });

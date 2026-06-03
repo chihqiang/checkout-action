@@ -82,7 +82,7 @@ export class Config {
     } else {
       sshCommand += ' -o StrictHostKeyChecking=no';
     }
-    process.env.GIT_SSH_COMMAND = sshCommand;
+    core.exportVariable('GIT_SSH_COMMAND', sshCommand);
 
     core.info(`SSH key configured at ${keyPath}`);
     return keyPath;
