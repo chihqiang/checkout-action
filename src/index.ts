@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
 import { Config } from './config';
 import { CheckoutService } from './checkout';
-import { info, error, success } from './log';
+import { info, error } from './log';
 
 function main(): void {
   try {
@@ -15,8 +15,6 @@ function main(): void {
     core.endGroup();
 
     checkout.run(config);
-
-    success('done');
   } catch (err) {
     const message = (err as Error)?.message ?? err;
     error(message as string);

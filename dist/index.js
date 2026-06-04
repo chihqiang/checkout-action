@@ -20114,7 +20114,6 @@ function main() {
     if (config.sshKey) info3("auth: ssh-key");
     core4.endGroup();
     checkout.run(config);
-    success("done");
   } catch (err) {
     const message = err?.message ?? err;
     error2(message);
