@@ -1,13 +1,14 @@
 import { spawnSync } from 'child_process';
-import { warning } from './log';
+import { info, warning } from './log';
 
 export class GitClient {
   private static readonly TIMEOUT = 300_000;
 
   run(args: string[], options?: { cwd?: string }): string {
+    info(`$ git ${args.join(' ')}`);
     const result = spawnSync('git', args, {
       cwd: options?.cwd,
-      stdio: ['ignore', 'pipe', 'pipe'],
+      stdio: ['ignore', 'pipe', 'inherit'],
       timeout: GitClient.TIMEOUT,
       env: { ...process.env, GIT_TERMINAL_PROMPT: '0' },
     });
@@ -16,12 +17,13 @@ export class GitClient {
       throw new Error(`git ${args.join(' ')} error: ${result.error.message}`);
     }
 
-    const stderr = result.stderr?.toString() || '';
     const stdout = result.stdout?.toString() || '';
 
     if (result.status !== 0 && result.status !== null) {
-      throw new Error(`git ${args.join(' ')} failed: ${stderr || stdout}`);
+      throw new Error(`git ${args.join(' ')} failed`);
     }
+
+    if (stdout) info(stdout.trimEnd());
 
     return stdout;
   }

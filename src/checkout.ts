@@ -18,7 +18,8 @@ export class CheckoutService {
     const ref = config.ref;
     const isFullHistory = config.fetchDepth === 0;
 
-    step(`Checking out ${repoUrl} into ${targetDir}`);
+    step(`${repoUrl}`);
+    if (ref) info(`ref: ${ref}`);
 
     const sshKeyPath = config.setupSshKey();
 
@@ -33,14 +34,13 @@ export class CheckoutService {
 
       if (config.setSafeDirectory) {
         this.git.config('safe.directory', targetDir, { global: true });
-        info(`Added ${targetDir} to safe.directory`);
       }
 
       const resolvedRef = ref || this.git.revParse('HEAD', { cwd: targetDir });
       core.setOutput(OUTPUT_PATH, targetDir);
       core.setOutput(OUTPUT_REF, resolvedRef);
 
-      success(`Repository checked out to ${targetDir}`);
+      success(`checked out to ${targetDir}`);
     } finally {
       if (config.token && !config.persistCredentials && config.isHttpUrl(repoUrl)) {
         this.removePersistedToken(repoUrl);
@@ -55,7 +55,6 @@ export class CheckoutService {
     const b64 = Buffer.from(`${username}:${token}`).toString('base64');
     const configKey = `http.${this.authHost(repoUrl)}.extraheader`;
     this.git.run(['config', '--global', configKey, `AUTHORIZATION: basic ${b64}`]);
-    info('Token persisted in git config');
   }
 
   private removePersistedToken(repoUrl: string): void {

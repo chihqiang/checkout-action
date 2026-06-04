@@ -8,16 +8,15 @@ function main(): void {
     const config = new Config();
     const checkout = new CheckoutService();
 
-    info(`Repository: ${config.repository}`);
-    info(`Ref: ${config.ref || '(default branch)'}`);
-    info(`Path: ${config.path || '(workspace root)'}`);
-
-    if (config.token) info('Authentication: token');
-    if (config.sshKey) info('Authentication: SSH key');
+    core.startGroup('Checkout info');
+    info(`${config.repository} | ${config.ref || '(default)'} | ${config.path || 'workspace root'}`);
+    if (config.token) info('auth: token');
+    if (config.sshKey) info('auth: ssh-key');
+    core.endGroup();
 
     checkout.run(config);
 
-    success('Checkout completed successfully');
+    success('done');
   } catch (err) {
     const message = (err as Error)?.message ?? err;
     error(message as string);

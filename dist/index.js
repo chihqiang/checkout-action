@@ -19756,22 +19756,22 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       process.stdout.write(message + os.EOL);
     }
     exports2.info = info4;
-    function startGroup(name) {
+    function startGroup2(name) {
       (0, command_1.issue)("group", name);
     }
-    exports2.startGroup = startGroup;
-    function endGroup() {
+    exports2.startGroup = startGroup2;
+    function endGroup2() {
       (0, command_1.issue)("endgroup");
     }
-    exports2.endGroup = endGroup;
+    exports2.endGroup = endGroup2;
     function group(name, fn) {
       return __awaiter(this, void 0, void 0, function* () {
-        startGroup(name);
+        startGroup2(name);
         let result;
         try {
           result = yield fn();
         } finally {
-          endGroup();
+          endGroup2();
         }
         return result;
       });
@@ -19935,20 +19935,21 @@ var GitClient = class _GitClient {
     this.TIMEOUT = 3e5;
   }
   run(args, options) {
+    info3(`$ git ${args.join(" ")}`);
     const result = (0, import_child_process2.spawnSync)("git", args, {
       cwd: options?.cwd,
-      stdio: ["ignore", "pipe", "pipe"],
+      stdio: ["ignore", "pipe", "inherit"],
       timeout: _GitClient.TIMEOUT,
       env: { ...process.env, GIT_TERMINAL_PROMPT: "0" }
     });
     if (result.error) {
       throw new Error(`git ${args.join(" ")} error: ${result.error.message}`);
     }
-    const stderr = result.stderr?.toString() || "";
     const stdout = result.stdout?.toString() || "";
     if (result.status !== 0 && result.status !== null) {
-      throw new Error(`git ${args.join(" ")} failed: ${stderr || stdout}`);
+      throw new Error(`git ${args.join(" ")} failed`);
     }
+    if (stdout) info3(stdout.trimEnd());
     return stdout;
   }
   config(name, value, options) {
@@ -20027,7 +20028,8 @@ var CheckoutService = class {
     const repoUrl = config.getCloneUrl();
     const ref = config.ref;
     const isFullHistory = config.fetchDepth === 0;
-    step(`Checking out ${repoUrl} into ${targetDir}`);
+    step(`${repoUrl}`);
+    if (ref) info3(`ref: ${ref}`);
     const sshKeyPath = config.setupSshKey();
     try {
       fs2.mkdirSync(config.workspace, { recursive: true });
@@ -20037,12 +20039,11 @@ var CheckoutService = class {
       this.checkoutRepository(config, repoUrl, targetDir, ref, isFullHistory);
       if (config.setSafeDirectory) {
         this.git.config("safe.directory", targetDir, { global: true });
-        info3(`Added ${targetDir} to safe.directory`);
       }
       const resolvedRef = ref || this.git.revParse("HEAD", { cwd: targetDir });
       core3.setOutput(OUTPUT_PATH, targetDir);
       core3.setOutput(OUTPUT_REF, resolvedRef);
-      success(`Repository checked out to ${targetDir}`);
+      success(`checked out to ${targetDir}`);
     } finally {
       if (config.token && !config.persistCredentials && config.isHttpUrl(repoUrl)) {
         this.removePersistedToken(repoUrl);
@@ -20056,7 +20057,6 @@ var CheckoutService = class {
     const b64 = Buffer.from(`${username}:${token}`).toString("base64");
     const configKey = `http.${this.authHost(repoUrl)}.extraheader`;
     this.git.run(["config", "--global", configKey, `AUTHORIZATION: basic ${b64}`]);
-    info3("Token persisted in git config");
   }
   removePersistedToken(repoUrl) {
     const configKey = `http.${this.authHost(repoUrl)}.extraheader`;
@@ -20108,13 +20108,13 @@ function main() {
   try {
     const config = new Config();
     const checkout = new CheckoutService();
-    info3(`Repository: ${config.repository}`);
-    info3(`Ref: ${config.ref || "(default branch)"}`);
-    info3(`Path: ${config.path || "(workspace root)"}`);
-    if (config.token) info3("Authentication: token");
-    if (config.sshKey) info3("Authentication: SSH key");
+    core4.startGroup("Checkout info");
+    info3(`${config.repository} | ${config.ref || "(default)"} | ${config.path || "workspace root"}`);
+    if (config.token) info3("auth: token");
+    if (config.sshKey) info3("auth: ssh-key");
+    core4.endGroup();
     checkout.run(config);
-    success("Checkout completed successfully");
+    success("done");
   } catch (err) {
     const message = err?.message ?? err;
     error2(message);
